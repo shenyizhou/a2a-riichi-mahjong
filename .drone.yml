@@ -1,0 +1,43 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  # 1. Install deps and build
+  - name: build-frontend
+    image: node:20
+    environment:
+      # Reduced memory to fit within limits
+      NODE_OPTIONS: '--max-old-space-size=1024'
+    commands:
+      - corepack enable
+      - npm install
+      - npm run build
+
+  # 2. Deploy to host volume
+  - name: deploy-frontend
+    image: alpine
+    volumes:
+      - name: wwwroot
+        path: /var/www/a2a-riichi-mahjong
+    commands:
+      - mkdir -p /var/www/a2a-riichi-mahjong/.next
+      - mkdir -p /var/www/a2a-riichi-mahjong/public
+      - cp -r .next/* /var/www/a2a-riichi-mahjong/.next/
+      - cp -r public/* /var/www/a2a-riichi-mahjong/public/
+      - cp package.json /var/www/a2a-riichi-mahjong/
+      - cp next.config.js /var/www/a2a-riichi-mahjong/
+    when:
+      branch:
+        - main
+        - master
+
+volumes:
+  - name: wwwroot
+    host:
+      path: /var/www/a2a-riichi-mahjong # Host directory for app
+
+trigger:
+  branch:
+    - main
+    - master
