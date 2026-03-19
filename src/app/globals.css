@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+  .content-auto {
+    content-visibility: auto;
+  }
+}
+
+/* 麻将牌样式 */
+.mahjong-tile {
+  @apply bg-mahjong-tile rounded-md shadow-md border border-amber-200 flex items-center justify-center font-bold text-xl select-none;
+  transition: all 0.2s ease;
+}
+
+.mahjong-tile:hover {
+  @apply shadow-lg transform -translate-y-1;
+}
+
+.mahjong-tile.selected {
+  @apply ring-2 ring-blue-500 transform -translate-y-2;
+}
+
+.mahjong-board {
+  @apply bg-mahjong-board rounded-xl p-6 shadow-inner;
+}

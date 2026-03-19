@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "appName": "a2a-riichi-mahjong",
+  "modules": ["auth", "profile", "game", "chat", "mcp"],
+  "config": {
+    "clientId": "daf07266-41f4-4ca3-9d6e-e290ef5334cd",
+    "redirectUris": ["http://localhost:3000/api/auth/callback"],
+    "allowedScopes": ["user.info", "chat", "note.add"]
+  },
+  "api": {
+    "baseUrl": "https://api.mindverse.com/gate/lab",
+    "oauthUrl": "https://go.second.me/oauth/",
+    "tokenEndpoint": "https://api.mindverse.com/gate/lab/api/oauth/token/code",
+    "refreshEndpoint": "https://api.mindverse.com/gate/lab/api/oauth/token/refresh"
+  },
+  "docs": {
+    "quickstart": "https://develop-docs.second.me/zh/docs",
+    "oauth2": "https://develop-docs.second.me/zh/docs/authentication/oauth2",
+    "apiReference": "https://develop-docs.second.me/zh/docs/api-reference/secondme",
+    "errors": "https://develop-docs.second.me/zh/docs/errors"
+  },
+  "prd": {
+    "summary": "基于 SecondMe 的 A2A 立直麻将游戏，让 SecondMe AI 作为对手陪你打麻将",
+    "features": [
+      "SecondMe OAuth 登录",
+      "获取并展示 SecondMe 个人信息",
+      "立直麻将对局",
+      "SecondMe AI 通过 chat 能力做出打牌决策",
+      "保存对局记录到 SecondMe 记忆"
+    ],
+    "targetUsers": "SecondMe 用户，麻将爱好者",
+    "designPreference": "现代化 UI，绿色麻将桌风格，响应式设计"
+  }
+}

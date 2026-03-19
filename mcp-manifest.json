@@ -1,0 +1,63 @@
+{
+  "manifest": {
+    "schemaVersion": "1",
+    "skill": {
+      "key": "a2a-riichi-mahjong",
+      "displayName": "A2A 立直麻将",
+      "description": "和 SecondMe AI 一起打立直麻将，AI 通过 chat 能力做打牌决策",
+      "keywords": ["麻将", "立直麻将", "游戏", "ai"]
+    },
+    "prompts": {
+      "activationShort": "玩立直麻将",
+      "activationLong": "和 SecondMe AI 一起玩一局立直麻将",
+      "systemSummary": "提供立直麻将游戏能力，可以和 SecondMe AI 对局。通过 Mjai 协议格式与 AI 交互，AI 基于 chat 能力做出决策。对局结束后自动保存记录到 SecondMe 记忆。"
+    },
+    "actions": [
+      {
+        "name": "new_game",
+        "description": "开始新的立直麻将对局",
+        "toolName": "new_game",
+        "payloadTemplate": {},
+        "displayHint": "text"
+      },
+      {
+        "name": "play_move",
+        "description": "在当前对局中执行一步操作",
+        "toolName": "play_move",
+        "payloadTemplate": {
+          "action": "{{action}}"
+        },
+        "displayHint": "json"
+      },
+      {
+        "name": "get_state",
+        "description": "获取当前游戏状态",
+        "toolName": "get_game_state",
+        "payloadTemplate": {},
+        "displayHint": "json"
+      }
+    ],
+    "mcp": {
+      "endpoint": "https://your-deployment-url.com/api/mcp",
+      "timeoutMs": 30000,
+      "toolAllow": ["new_game", "play_move", "get_game_state"],
+      "headersTemplate": {},
+      "authMode": "bearer_token"
+    },
+    "oauth": {
+      "appId": "daf07266-41f-4ca3-9d6e-e290ef5334cd",
+      "requiredScopes": ["user.info", "chat", "note.add"]
+    },
+    "envBindings": {
+      "release": {
+        "enabled": true,
+        "endpoint": "https://your-deployment-url.com/api/mcp"
+      }
+    }
+  },
+  "envSecrets": {
+    "release": {
+      "values": {}
+    }
+  }
+}

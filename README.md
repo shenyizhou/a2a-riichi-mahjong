@@ -1,0 +1,110 @@
+# A2A 立直麻将
+
+基于 SecondMe 的 A2A 立直麻将游戏，让 SecondMe AI 作为对手陪你打麻将。
+
+## 功能
+
+- 🔐 **SecondMe OAuth 登录** - 使用你的 SecondMe 账号快速登录
+- 👤 **个人信息展示** - 获取并展示你的 SecondMe 个人信息
+- 🎮 **立直麻将对局** - 和 SecondMe AI 进行一对一立直麻将对战
+- 🧠 **AI 决策** - SecondMe 通过 chat 能力理解局面并做出打牌决策
+- 📝 **记忆保存** - 对局记录自动保存到你的 SecondMe 记忆
+- 🔌 **MCP 集成** - 支持 OpenClaw 通过 MCP 调用
+
+## 快速开始
+
+### 1. 安装依赖
+
+```bash
+cd a2a-riichi-mahjong
+npm install
+```
+
+### 2. 配置环境变量
+
+复制 `.env.example` 到 `.env.local`：
+
+```bash
+cp .env.example .env.local
+```
+
+编辑 `.env.local`，填入你的 SecondMe 凭证：
+
+```env
+SECONDME_CLIENT_ID=your-client-id
+SECONDME_CLIENT_SECRET=your-client-secret
+NEXTAUTH_SECRET=generate-a-random-secret
+```
+
+生成 `NEXTAUTH_SECRET` 可以用：
+
+```bash
+openssl rand -hex 32
+```
+
+### 3. 启动开发服务器
+
+```bash
+npm run dev
+```
+
+打开浏览器访问 [http://localhost:3000](http://localhost:3000)
+
+## 技术栈
+
+- **框架**: Next.js 14 + App Router + TypeScript
+- **样式**: Tailwind CSS
+- **认证**: 基于 SecondMe OAuth2
+- **AI**: SecondMe Chat API
+- **协议**: Mjai 协议 (参考 [smly/mjai.app](https://github.com/smly/mjai.app))
+
+## SecondMe 集成
+
+本项目使用了以下 SecondMe 能力：
+
+| 权限范围 | 用途 |
+|---------|------|
+| `user.info` | 获取用户基础信息，认证 |
+| `chat` | AI 做出打牌决策 |
+| `note.add` | 保存对局记录到 SecondMe 记忆 |
+
+## 项目结构
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── api/
+│   │   ├── auth/          # OAuth 认证路由
+│   │   ├── game/          # 游戏 API
+│   │   └── secondme/      # SecondMe API 代理
+│   ├── game/              # 游戏页面
+│   ├── profile/           # 个人资料页面
+│   └── page.tsx           # 首页
+├── components/            # React 组件
+├── lib/
+│   ├── secondme/          # SecondMe OAuth 客户端
+│   ├── mahjong/           # 麻将游戏逻辑
+│   └── types/             # TypeScript 类型定义
+└── styles/                # 全局样式
+```
+
+## 游戏规则
+
+遵循标准立直麻将规则，基于 Mjai 协议。SecondMe AI 作为对手，通过聊天接口理解当前局面并输出动作决策。
+
+## MCP 集成
+
+本项目还提供 MCP 接口，可以让 OpenClaw 调用：
+
+- `start_game` - 开始新游戏
+- `play_move` - 执行一步操作
+- `get_game_state` - 获取当前游戏状态
+
+## 许可证
+
+MIT
+
+## 致谢
+
+- [mjai.app](https://github.com/smly/mjai.app) - Mjai 协议和模拟器参考
+- [SecondMe](https://second.me) - AI 能力平台
