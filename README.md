@@ -190,6 +190,16 @@ docker-compose up -d
 
 容器会在后台运行，端口映射到 `127.0.0.1:3000`，然后用 Nginx 反向代理即可。
 
+### CI/CD with Drone
+
+项目已经包含 `.drone.yml` 配置，如果你使用 Drone CI，可以直接使用：
+
+- 自动在 `main` 分支提交时构建
+- 自动部署到你的服务器主机目录 `/var/www/a2a-riichi-mahjong`
+- 需要在 Drone 中配置 host volume 映射
+
+配置方式请参考你的 Drone 文档。
+
 ## MCP 集成
 
 本项目还提供 MCP 接口，可以让 OpenClaw 调用：
