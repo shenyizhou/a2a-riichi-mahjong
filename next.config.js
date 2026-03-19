@@ -1,8 +1,10 @@
 /** @type {import('next').NextConfig} */
+const isProduction = process.env.NODE_ENV === 'production'
+
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone', // For Docker deployment
-  basePath: '/web', // 部署在 https://www.netease.xin/web 子路径下
+  basePath: isProduction ? '/web' : '', // 线上部署在 /web 子路径，本地开发直接访问根路径
   trailingSlash: true,
 }
 
