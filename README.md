@@ -92,6 +92,35 @@ src/
 
 遵循标准立直麻将规则，基于 Mjai 协议。SecondMe AI 作为对手，通过聊天接口理解当前局面并输出动作决策。
 
+## 部署到云端
+
+### 部署到 Vercel (推荐)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/shenyizhou/a2a-riichi-mahjong)
+
+1. 在 Vercel 导入你的仓库
+2. 设置环境变量（和 `.env.local` 一样）
+3. 点击 Deploy
+4. 部署完成后，在 SecondMe Develop 后台添加生产环境的重定向 URI：
+   ```
+   https://你的域名.vercel.app/api/auth/callback
+   ```
+
+### 环境变量（生产环境）
+
+| 变量名 | 说明 |
+|--------|------|
+| `SECONDME_CLIENT_ID` | 你的 SecondMe Client ID |
+| `SECONDME_CLIENT_SECRET` | 你的 SecondMe Client Secret |
+| `SECONDME_REDIRECT_URI` | `https://你的域名/api/auth/callback` |
+| `NEXTAUTH_URL` | `https://你的域名` |
+| `NEXTAUTH_SECRET` | 随机字符串，可用 `openssl rand -hex 32` 生成 |
+| `DEBUG_SKIP_LOGIN` | `false` |
+
+### 更新 SecondMe 重定向 URI
+
+部署到生产环境后，记得登录 [SecondMe Develop](https://develop.second.me/)，找到你的应用，添加生产环境的重定向 URI。
+
 ## MCP 集成
 
 本项目还提供 MCP 接口，可以让 OpenClaw 调用：
@@ -99,6 +128,19 @@ src/
 - `start_game` - 开始新游戏
 - `play_move` - 执行一步操作
 - `get_game_state` - 获取当前游戏状态
+
+部署后需要更新 `mcp-manifest.json` 中的 `mcp.endpoint` 为你的实际域名。
+
+## 调试模式
+
+如果 OAuth 登录遇到问题，可以开启调试模式跳过登录：
+
+```env
+DEBUG_SKIP_LOGIN=true
+DEBUG_ACCESS_TOKEN=你的真实-access-token
+```
+
+开启后直接访问首页即可进入游戏。
 
 ## 许可证
 
