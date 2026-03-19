@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getSession, isTokenExpired, refreshToken } from '@/lib/secondme/session'
+import { getSession, isTokenExpired } from '@/lib/secondme/session'
 import { secondmeClient } from '@/lib/secondme/client'
 import { setSession } from '@/lib/secondme/session'
 
