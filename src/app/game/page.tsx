@@ -241,11 +241,26 @@ export default function GamePage() {
             <div className="mb-4">
               <p className="text-sm text-white mb-2">宝牌指示牌</p>
               <div className="flex gap-2">
-                {game.doraMarkers.map((dora, i) => (
-                  <div key={i} className="mahjong-tile w-12 h-16 text-lg">
-                    {formatTile(dora)}
-                  </div>
-                ))}
+                {game.doraMarkers.map((dora, i) => {
+                  const type = dora[dora.length - 1]
+                  const typeClass = {
+                    m: 'pai-m',
+                    p: 'pai-p',
+                    s: 'pai-s',
+                    E: 'pai-z',
+                    S: 'pai-z',
+                    W: 'pai-z',
+                    N: 'pai-z',
+                    P: 'pai-z',
+                    F: 'pai-z',
+                    C: 'pai-z',
+                  }[type] || 'pai-m'
+                  return (
+                    <div key={i} className={`mahjong-tile w-12 h-16 text-lg ${typeClass}`}>
+                      {formatTile(dora)}
+                    </div>
+                  )
+                })}
               </div>
             </div>
 
@@ -255,11 +270,27 @@ export default function GamePage() {
               <div className="flex flex-wrap gap-2">
                 {game.events
                   .filter(e => e.type === 'dahai' && e.actor === 1)
-                  .map((e, i) => (
-                    <div key={i} className="mahjong-tile w-10 h-14 text-base">
-                      {formatTile((e as { pai: string }).pai)}
-                    </div>
-                  ))}
+                  .map((e, i) => {
+                    const pai = (e as { pai: string }).pai
+                    const type = pai[pai.length - 1]
+                    const typeClass = {
+                      m: 'pai-m',
+                      p: 'pai-p',
+                      s: 'pai-s',
+                      E: 'pai-z',
+                      S: 'pai-z',
+                      W: 'pai-z',
+                      N: 'pai-z',
+                      P: 'pai-z',
+                      F: 'pai-z',
+                      C: 'pai-z',
+                    }[type] || 'pai-m'
+                    return (
+                      <div key={i} className={`mahjong-tile w-10 h-14 text-base ${typeClass}`}>
+                        {formatTile(pai)}
+                      </div>
+                    )
+                  })}
               </div>
             </div>
 
@@ -269,11 +300,27 @@ export default function GamePage() {
               <div className="flex flex-wrap gap-2">
                 {game.events
                   .filter(e => e.type === 'dahai' && e.actor === 0)
-                  .map((e, i) => (
-                    <div key={i} className="mahjong-tile w-10 h-14 text-base">
-                      {formatTile((e as { pai: string }).pai)}
-                    </div>
-                  ))}
+                  .map((e, i) => {
+                    const pai = (e as { pai: string }).pai
+                    const type = pai[pai.length - 1]
+                    const typeClass = {
+                      m: 'pai-m',
+                      p: 'pai-p',
+                      s: 'pai-s',
+                      E: 'pai-z',
+                      S: 'pai-z',
+                      W: 'pai-z',
+                      N: 'pai-z',
+                      P: 'pai-z',
+                      F: 'pai-z',
+                      C: 'pai-z',
+                    }[type] || 'pai-m'
+                    return (
+                      <div key={i} className={`mahjong-tile w-10 h-14 text-base ${typeClass}`}>
+                        {formatTile(pai)}
+                      </div>
+                    )
+                  })}
               </div>
             </div>
 
@@ -281,18 +328,34 @@ export default function GamePage() {
             <div>
               <p className="text-sm text-white mb-2">你的手牌</p>
               <div className="flex flex-wrap gap-2">
-                {game.humanHand.map((pai, i) => (
-                  <button
-                    key={i}
-                    className={`mahjong-tile w-14 h-20 ${
-                      selectedTile === pai ? 'selected' : ''
-                    }`}
-                    onClick={() => setSelectedTile(pai)}
-                    disabled={game.currentActor !== 0 || thinking}
-                  >
-                    {formatTile(pai)}
-                  </button>
-                ))}
+                {game.humanHand.map((pai, i) => {
+                  // Get tile type for color
+                  const type = pai[pai.length - 1]
+                  const typeClass = {
+                    m: 'pai-m',
+                    p: 'pai-p',
+                    s: 'pai-s',
+                    E: 'pai-z',
+                    S: 'pai-z',
+                    W: 'pai-z',
+                    N: 'pai-z',
+                    P: 'pai-z',
+                    F: 'pai-z',
+                    C: 'pai-z',
+                  }[type] || 'pai-m'
+                  return (
+                    <button
+                      key={i}
+                      className={`mahjong-tile w-14 h-20 ${typeClass} ${
+                        selectedTile === pai ? 'selected' : ''
+                      }`}
+                      onClick={() => setSelectedTile(pai)}
+                      disabled={game.currentActor !== 0 || thinking}
+                    >
+                      {formatTile(pai)}
+                    </button>
+                  )
+                })}
               </div>
             </div>
           </div>
