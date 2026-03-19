@@ -256,7 +256,7 @@ export default function GamePage() {
                     C: 'pai-z',
                   }[type] || 'pai-m'
                   return (
-                    <div key={i} className={`mahjong-tile w-12 h-16 text-lg ${typeClass}`}>
+                    <div key={i} className={`mahjong-tile w-10 h-14 text-xl ${typeClass}`}>
                       {formatTile(dora)}
                     </div>
                   )
@@ -286,7 +286,7 @@ export default function GamePage() {
                       C: 'pai-z',
                     }[type] || 'pai-m'
                     return (
-                      <div key={i} className={`mahjong-tile w-10 h-14 text-base ${typeClass}`}>
+                      <div key={i} className={`mahjong-tile w-8 h-12 text-lg ${typeClass}`}>
                         {formatTile(pai)}
                       </div>
                     )
@@ -316,7 +316,7 @@ export default function GamePage() {
                       C: 'pai-z',
                     }[type] || 'pai-m'
                     return (
-                      <div key={i} className={`mahjong-tile w-10 h-14 text-base ${typeClass}`}>
+                      <div key={i} className={`mahjong-tile w-8 h-12 text-lg ${typeClass}`}>
                         {formatTile(pai)}
                       </div>
                     )
@@ -346,7 +346,7 @@ export default function GamePage() {
                   return (
                     <button
                       key={i}
-                      className={`mahjong-tile w-14 h-20 ${typeClass} ${
+                      className={`mahjong-tile w-12 h-16 text-2xl ${typeClass} ${
                         selectedTile === pai ? 'selected' : ''
                       }`}
                       onClick={() => setSelectedTile(pai)}
@@ -398,7 +398,7 @@ export default function GamePage() {
                   {game.events.slice(-10).map((e, i) => (
                     <li key={i} className="flex gap-2">
                       <span className="text-green-600 dark:text-green-400 w-12">
-                        {e.actor === 0 ? '你' : 'AI'}:
+                        {'actor' in e ? (e.actor === 0 ? '你' : 'AI') : ''}:
                       </span>
                       <span className="text-green-900 dark:text-green-100">
                         {e.type}
