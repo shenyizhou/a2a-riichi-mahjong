@@ -121,6 +121,75 @@ src/
 
 部署到生产环境后，记得登录 [SecondMe Develop](https://develop.second.me/)，找到你的应用，添加生产环境的重定向 URI。
 
+### 部署到自有服务器
+
+有两种方式：**直接使用 PM2** 或者 **Docker**
+
+#### 方式 1: PM2 (推荐简单部署)
+
+在你的服务器上：
+
+```bash
+# 克隆代码
+git clone https://github.com/shenyizhou/a2a-riichi-mahjong.git
+cd a2a-riichi-mahjong
+
+# 安装依赖
+npm install
+
+# 复制环境变量
+cp .env.example .env.production
+# 编辑 .env.production 填入你的配置
+
+# 构建
+npm run build
+
+# 使用 PM2 启动
+pm2 start ecosystem.config.js
+
+# 设置开机自启
+pm2 startup
+pm2 save
+```
+
+配置反向代理（使用 Nginx）：
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+如果你使用 HTTPS（推荐），请配置 SSL 证书。
+
+#### 方式 2: Docker Compose
+
+```bash
+# 克隆代码
+git clone https://github.com/shenyizhou/a2a-riichi-mahjong.git
+cd a2a-riichi-mahjong
+
+# 复制环境变量
+cp .env.example .env
+# 编辑 .env 填入你的配置
+
+# 启动
+docker-compose up -d
+```
+
+容器会在后台运行，端口映射到 `127.0.0.1:3000`，然后用 Nginx 反向代理即可。
+
 ## MCP 集成
 
 本项目还提供 MCP 接口，可以让 OpenClaw 调用：

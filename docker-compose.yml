@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  mahjong:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: a2a-riichi-mahjong
+    restart: always
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      - NODE_ENV=production
+      - SECONDME_CLIENT_ID=${SECONDME_CLIENT_ID}
+      - SECONDME_CLIENT_SECRET=${SECONDME_CLIENT_SECRET}
+      - SECONDME_REDIRECT_URI=${SECONDME_REDIRECT_URI}
+      - SECONDME_API_BASE_URL=${SECONDME_API_BASE_URL:-https://api.mindverse.com/gate/lab}
+      - SECONDME_OAUTH_URL=${SECONDME_OAUTH_URL:-https://go.second.me/oauth/}
+      - SECONDME_TOKEN_ENDPOINT=${SECONDME_TOKEN_ENDPOINT:-https://api.mindverse.com/gate/lab/api/oauth/token/code}
+      - SECONDME_REFRESH_ENDPOINT=${SECONDME_REFRESH_ENDPOINT:-https://api.mindverse.com/gate/lab/api/oauth/token/refresh}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - DEBUG_SKIP_LOGIN=${DEBUG_SKIP_LOGIN:-false}
