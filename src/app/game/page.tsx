@@ -165,7 +165,7 @@ export default function GamePage() {
 
   return (
     <div className="min-h-screen bg-green-50 dark:bg-green-900">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 pb-32">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
@@ -300,7 +300,7 @@ export default function GamePage() {
 
         {/* Action Bar */}
         {game && game.currentActor === 0 && (
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/95 dark:bg-green-900/95 backdrop-blur shadow-lg rounded-xl p-4 border border-green-200 dark:border-green-700">
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/95 dark:bg-green-900/95 backdrop-blur shadow-lg rounded-xl p-4 border border-green-200 dark:border-green-700 z-50">
             <div className="flex gap-3">
               <Button
                 variant="primary"
@@ -316,7 +316,7 @@ export default function GamePage() {
 
         {/* AI Thinking Indicator */}
         {thinking && (
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/95 dark:bg-green-900/95 backdrop-blur shadow-lg rounded-xl p-4 border border-green-200 dark:border-green-700 flex items-center gap-3">
+          <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-white/95 dark:bg-green-900/95 backdrop-blur shadow-lg rounded-xl p-4 border border-green-200 dark:border-green-700 flex items-center gap-3 z-40">
             <Brain className="w-5 h-5 animate-pulse" />
             <span>SecondMe AI 思考中...</span>
           </div>
