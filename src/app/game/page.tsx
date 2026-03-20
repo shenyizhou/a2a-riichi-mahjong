@@ -395,17 +395,38 @@ export default function GamePage() {
             <CardContent>
               <div className="max-h-48 overflow-y-auto">
                 <ul className="space-y-1 text-sm">
-                  {game.events.slice(-10).map((e, i) => (
-                    <li key={i} className="flex gap-2">
-                      <span className="text-green-600 dark:text-green-400 w-12">
-                        {'actor' in e ? (e.actor === 0 ? '你' : 'AI') : ''}:
-                      </span>
-                      <span className="text-green-900 dark:text-green-100">
-                        {e.type}
-                        {'pai' in e && ` - ${formatTile(e.pai)}`}
-                      </span>
-                    </li>
-                  ))}
+                  {game.events.slice(-10).map((e, i) => {
+                    // Translate event type to Chinese (refer to tenhou.net terms)
+                    const eventNames: Record<string, string> = {
+                      'start_game': '开始游戏',
+                      'end_game': '结束游戏',
+                      'start_kyoku': '开始局',
+                      'end_kyoku': '结束局',
+                      'tsumo': '摸牌',
+                      'dahai': '打牌',
+                      'chi': '吃',
+                      'pon': '碰',
+                      'kan': '杠',
+                      'kakan': '加杠',
+                      'ankan': '暗杠',
+                      'ron': '荣和',
+                      'tsumo_agari': '自摸',
+                      'ryukyoku': '流局',
+                      'dora': '宝牌',
+                      'none': '无动作',
+                    }
+                    return (
+                      <li key={i} className="flex gap-2">
+                        <span className="text-green-600 dark:text-green-400 w-14">
+                          {'actor' in e ? (e.actor === 0 ? '你' : 'AI') : ''}:
+                        </span>
+                        <span className="text-green-900 dark:text-green-100">
+                          {eventNames[e.type] || e.type}
+                          {'pai' in e && ` - ${formatTile(e.pai)}`}
+                        </span>
+                      </li>
+                    )
+                  })}
                 </ul>
               </div>
             </CardContent>
