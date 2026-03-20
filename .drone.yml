@@ -29,6 +29,21 @@ steps:
       - cp package.json /var/www/a2a-riichi-mahjong/
       - cp package-lock.json /var/www/a2a-riichi-mahjong/
       - cp next.config.js /var/www/a2a-riichi-mahjong/
+      - cp ecosystem.config.js /var/www/a2a-riichi-mahjong/
+    when:
+      branch:
+        - main
+        - master
+
+  # 3. Install production dependencies into host app directory
+  - name: install-runtime-deps
+    image: node:18-alpine
+    volumes:
+      - name: wwwroot
+        path: /var/www/a2a-riichi-mahjong
+    commands:
+      - cd /var/www/a2a-riichi-mahjong
+      - npm ci --omit=dev
     when:
       branch:
         - main
