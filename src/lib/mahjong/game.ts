@@ -1,13 +1,12 @@
-// 简化版二人立直麻将游戏逻辑
+// 二人清一色万子麻将游戏逻辑
+// 规则：只使用万子牌，不能吃碰杠，双方轮流打牌，自摸胡牌
 // 遵循 mjai 协议格式
 
 import type { GameState, MjaiEvent, MjaiAction, AIDecisionRequest } from '@/lib/types/mjai'
 
+// 只使用万子牌 (清一色)
 const ALL_TILES = [
   '1m', '2m', '3m', '4m', '5m', '6m', '7m', '8m', '9m',
-  '1p', '2p', '3p', '4p', '5p', '6p', '7p', '8p', '9p',
-  '1s', '2s', '3s', '4s', '5s', '6s', '7s', '8s', '9s',
-  'E', 'S', 'W', 'N', 'P', 'F', 'C',
 ]
 
 function shuffle<T>(array: T[]): T[] {
@@ -86,9 +85,16 @@ export function createNewGame(): GameState {
 export function getAIDecisionPrompt(state: GameState, aiPlayerId: number): string {
   const events = getVisibleEventsForPlayer(state, aiPlayerId)
 
-  const prompt = `你现在是一名立直麻将 AI 玩家，正在和人类玩家进行二人对局。
+  const prompt = `你现在是一名一名麻将 AI 玩家，正在和人类玩家进行**二人清一色万子麻将**对决。
 
-当前遵循 Mjai 协议格式，以下是到目前为止的游戏事件：
+## 游戏规则
+- 只使用万子牌 (一万到九万)，共 36 张
+- 不能吃、碰、杠，没有这些操作
+- 双方轮流摸牌打牌
+- 最先听牌胡牌者获胜
+- 遵循 Mjai 协议格式
+
+当前到目前为止的游戏事件：
 
 \`\`\`json
 ${JSON.stringify(events, null, 2)}
@@ -96,19 +102,19 @@ ${JSON.stringify(events, null, 2)}
 
 现在轮到你行动了。请分析当前局面，输出你的下一步动作。
 
-动作必须是符合 Mjai 协议的 JSON 格式，只输出 JSON，不要其他内容。
+动作必须是符合 Mjai 协议的 JSON 格式，**只输出 JSON，不要其他内容**。
 
 可用的动作类型：
 - dahai: 打出一张牌 {"type": "dahai", "pai": "5m", "tsumogiri": false}
 - riichi: 立直 {"type": "riichi"}
-- ron: 和牌 {"type": "ron"}
+- ron: 荣和 {"type": "ron"}
 - tsumo_agari: 自摸和牌 {"type": "tsumo_agari"}
 - none: 不动作 {"type": "none"}
 
 请记住：
 1. 只输出合法的 JSON 动作
 2. tsumogiri 为 true 表示摸切就是刚摸到的那张牌
-3. 选择对你最有利的打法
+3. 选择对你最有利的打法，争取最快胡牌
 `
 
   return prompt

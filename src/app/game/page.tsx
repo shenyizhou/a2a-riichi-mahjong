@@ -176,7 +176,7 @@ export default function GamePage() {
               </Button>
             </Link>
             <h1 className="text-2xl font-bold text-green-900 dark:text-green-100">
-              立直麻将对局
+              清一色万子麻将对局
             </h1>
           </div>
           <div className="flex gap-2">
