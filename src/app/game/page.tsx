@@ -231,25 +231,9 @@ export default function GamePage() {
     )
   }
 
-  if (!session) {
-    return (
-      <div className="min-h-screen bg-green-50 dark:bg-green-900">
-        <div className="container mx-auto px-4 py-8">
-          <Card className="max-w-md mx-auto">
-            <CardHeader>
-              <CardTitle>未登录</CardTitle>
-              <CardDescription>请先使用 SecondMe 登录</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/">
-                <Button>返回首页</Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
-  }
+  // Guest mode: allow play without login when GUEST_MODE is enabled
+  // A demo access token must be configured in environment
+  const isGuestMode = !session && process.env.NEXT_PUBLIC_GUEST_MODE === 'true'
 
   return (
     <div className="min-h-screen bg-green-50 dark:bg-green-900">
@@ -270,10 +254,12 @@ export default function GamePage() {
           <div className="flex gap-2">
             {game && (
               <>
-                <Button variant="outline" onClick={saveGame}>
-                  <Save className="w-4 h-4 mr-2" />
-                  保存
-                </Button>
+                {session && (
+                  <Button variant="outline" onClick={saveGame}>
+                    <Save className="w-4 h-4 mr-2" />
+                    保存
+                  </Button>
+                )}
                 <Button variant="primary" onClick={startNewGame}>
                   <RefreshCw className="w-4 h-4 mr-2" />
                   新局
@@ -296,6 +282,17 @@ export default function GamePage() {
             <p className="text-yellow-700 text-sm">
               当前使用调试模式跳过 OAuth 登录，但 AI 功能需要有效的 SecondMe 访问令牌。
               在 <code>.env.local</code> 中设置 <code>DEBUG_ACCESS_TOKEN=你的真实access-token</code> 后 AI 功能才能正常工作。
+            </p>
+          </div>
+        )}
+
+        {/* Guest Mode Banner */}
+        {isGuestMode && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <p className="text-blue-800 font-medium">👋 游客模式已启用</p>
+            <p className="text-blue-700 text-sm">
+              你现在可以不登录直接试玩。AI 决策使用公共演示令牌。
+              保存对局功能需要登录你的 SecondMe 账号。
             </p>
           </div>
         )}
