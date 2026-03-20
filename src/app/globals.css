@@ -34,16 +34,23 @@ body {
 
 /* 麻将牌样式 */
 .mahjong-tile {
-  @apply bg-amber-50 rounded-md shadow-md border-2 border-amber-300 flex items-center justify-center font-black text-3xl select-none;
+  @apply bg-amber-50 rounded-lg shadow-md border-2 border-amber-300 flex items-center justify-center font-black select-none;
   transition: all 0.2s ease;
+  text-align: center;
+  line-height: 1;
+  padding: 0;
 }
 
-.mahjong-tile:hover {
-  @apply shadow-xl transform -translate-y-1;
+.mahjong-tile:hover:not(:disabled) {
+  @apply shadow-xl -translate-y-1;
 }
 
 .mahjong-tile.selected {
-  @apply ring-4 ring-blue-500 transform -translate-y-2 bg-amber-100;
+  @apply ring-4 ring-blue-500 -translate-y-2 bg-amber-100;
+}
+
+.mahjong-tile:disabled {
+  @apply opacity-50 cursor-not-allowed;
 }
 
 /* 按牌类型区分文字颜色 */
@@ -60,6 +67,33 @@ body {
   @apply text-red-700;
 }
 
+/* 麻将牌桌面背景 */
 .mahjong-board {
   @apply bg-mahjong-board rounded-xl p-6 shadow-inner;
+}
+
+.mahjong-board p {
+  @apply text-left mb-0;
+}
+
+/* 得分牌文字居中 */
+.score-item {
+  @apply text-center;
+}
+
+/* 改进滚动条样式 */
+.max-h-48::-webkit-scrollbar {
+  @apply w-2;
+}
+
+.max-h-48::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded-full;
+}
+
+.max-h-48::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded-full;
+}
+
+.max-h-48::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
 }

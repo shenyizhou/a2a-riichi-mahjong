@@ -13,6 +13,7 @@ export type MjaiEvent =
   | { type: 'kan'; actor: number; target: number; pai: string; consumed: string[] }
   | { type: 'kakan'; actor: number; pai: string; consumed: string[] }
   | { type: 'ankan'; actor: number; consumed: string[] }
+  | { type: 'riichi'; actor: number }
   | { type: 'ron'; actor: number; target: number; pai: string }
   | { type: 'tsumo_agari'; actor: number }
   | { type: 'ryukyoku' }
@@ -42,6 +43,7 @@ export interface GameState {
   doraMarkers: string[]
   gameStarted: boolean
   gameEnded: boolean
+  riichiDeclared: boolean
 }
 
 export interface AIDecisionRequest {

@@ -142,7 +142,7 @@ export class SecondMeClient {
    * 添加笔记到 SecondMe
    */
   async addNote(accessToken: string, request: NoteRequest): Promise<{ noteId: string }> {
-    const response = await fetch(`${this.config.apiBaseUrl}/api/secondme/note/add`, {
+    const response = await fetch(`${this.config.apiBaseUrl}/api/secondme/notes/create`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

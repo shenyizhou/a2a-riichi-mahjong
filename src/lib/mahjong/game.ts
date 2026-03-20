@@ -35,11 +35,12 @@ export function createNewGame(): GameState {
     events: [],
     currentActor: 0, // East starts (human is 0 = east)
     availableActions: [],
-    humanHand: humanHand.sort(),
+    humanHand: humanHand, // Don't sort, keep the deal order
     aiHandHidden: aiHand.map(() => '?'),
     doraMarkers: [doraMarker],
     gameStarted: true,
     gameEnded: false,
+    riichiDeclared: false,
   }
 
   // Push start events
@@ -88,11 +89,19 @@ export function getAIDecisionPrompt(state: GameState, aiPlayerId: number): strin
   const prompt = `你现在是一名一名麻将 AI 玩家，正在和人类玩家进行**二人清一色万子麻将**对决。
 
 ## 游戏规则
-- 只使用万子牌 (一万到九万)，共 36 张
+- 只使用万子牌 (一万到九万)，共 36 张，每人 14 张牌
 - 不能吃、碰、杠，没有这些操作
+- 手牌不排序，保持发牌顺序
 - 双方轮流摸牌打牌
-- 最先听牌胡牌者获胜
+- 玩家**自己判断是否胡牌**，可以选择胡牌
+- 立直：宣布听牌，立直后不能换牌
+- 诈胡惩罚：诈胡扣除 10000 点
+- 最先胡牌者获胜
 - 遵循 Mjai 协议格式
+
+当前分数：
+- 你：${state.scores[aiPlayerId]}
+- 对手：${state.scores[aiPlayerId === 0 ? 1 : 0]}
 
 当前到目前为止的游戏事件：
 
@@ -106,7 +115,7 @@ ${JSON.stringify(events, null, 2)}
 
 可用的动作类型：
 - dahai: 打出一张牌 {"type": "dahai", "pai": "5m", "tsumogiri": false}
-- riichi: 立直 {"type": "riichi"}
+- riichi: 立直 (宣布听牌) {"type": "riichi"}
 - ron: 荣和 {"type": "ron"}
 - tsumo_agari: 自摸和牌 {"type": "tsumo_agari"}
 - none: 不动作 {"type": "none"}
@@ -114,7 +123,9 @@ ${JSON.stringify(events, null, 2)}
 请记住：
 1. 只输出合法的 JSON 动作
 2. tsumogiri 为 true 表示摸切就是刚摸到的那张牌
-3. 选择对你最有利的打法，争取最快胡牌
+3. 自己判断是否可以胡牌，确认胡牌再选择 ron/tsumo_agari
+4. 如果诈胡会被扣 10000 分
+5. 选择对你最有利的打法，争取最快胡牌
 `
 
   return prompt

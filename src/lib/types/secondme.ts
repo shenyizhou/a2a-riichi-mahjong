@@ -8,6 +8,7 @@ export interface SecondMeConfig {
   oauthUrl: string
   tokenEndpoint: string
   refreshEndpoint: string
+  allowedScopes?: string[]
 }
 
 export interface TokenResponse {
