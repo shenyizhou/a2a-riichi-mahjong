@@ -6,9 +6,9 @@ import { Button } from '@/components/Button'
 import { LogIn, User, Gamepad2, ArrowRight, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
-export default function Home() {
-  const { session, loading } = useSession()
+function AuthErrorBanner() {
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
 
@@ -17,6 +17,24 @@ export default function Home() {
     missing_code: '缺少授权码，请重试',
     auth_failed: '认证失败，请检查 Client ID 和 Client Secret 是否正确',
   }
+
+  if (!error) {
+    return null
+  }
+
+  return (
+    <div className="max-w-3xl mx-auto mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
+      <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+      <div>
+        <p className="text-red-700 font-medium">登录失败</p>
+        <p className="text-red-600 text-sm">{errorMessages[error] || error}</p>
+      </div>
+    </div>
+  )
+}
+
+export default function Home() {
+  const { session, loading } = useSession()
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-green-50 to-green-100 dark:from-green-900 dark:to-green-950">
@@ -32,15 +50,9 @@ export default function Home() {
         </header>
 
         {/* Error Message */}
-        {error && (
-          <div className="max-w-3xl mx-auto mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-            <div>
-              <p className="text-red-700 font-medium">登录失败</p>
-              <p className="text-red-600 text-sm">{errorMessages[error] || error}</p>
-            </div>
-          </div>
-        )}
+        <Suspense fallback={null}>
+          <AuthErrorBanner />
+        </Suspense>
 
         {/* Main Content */}
         <div className="max-w-3xl mx-auto">
