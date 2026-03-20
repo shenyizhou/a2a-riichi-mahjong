@@ -10,7 +10,8 @@ steps:
       # Reduced memory to fit within limits
       NODE_OPTIONS: '--max-old-space-size=1024'
     commands:
-      - npm ci
+      - corepack enable
+      - npm install
       - npm run build
 
   # 2. Deploy to host volume
