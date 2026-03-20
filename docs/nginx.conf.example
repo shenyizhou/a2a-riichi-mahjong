@@ -1,0 +1,57 @@
+# Nginx 配置示例 - 正确代理 Next.js standalone 服务
+# 部署路径: https://www.netease.xin/web/a2a-riichi-mahjong/
+# Next.js 服务运行在: http://127.0.0.1:3000
+
+server {
+    listen 80;
+    server_name www.netease.xin;
+
+    # HTTP 重定向到 HTTPS
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name www.netease.xin;
+
+    # SSL 证书配置（换成你的）
+    ssl_certificate /path/to/fullchain.pem;
+    ssl_certificate_key /path/to/privkey.pem;
+
+    # 项目根目录
+    set $project_root /var/www/a2a-riichi-mahjong;
+
+    # Next.js standalone 静态文件位置
+    # 注意：standalone 构建后，静态文件在 .next/standalone/.next/static
+    location ~ ^/web/_next/static/(.*)$ {
+        alias $project_root/.next/standalone/.next/static/$1;
+        gzip on;
+        gzip_types text/css application/javascript image/svg+xml;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # 静态资源（public 目录）
+    location ~ ^/web/public/(.*)$ {
+        alias $project_root/public/$1;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # 所有请求代理到 Next.js 服务
+    # basePath 是 /web，所以实际请求路径要保留 /web 前缀
+    location /web/ {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # PM2 会启动 Next.js 在 3000 端口，确保 PM2 配置正确
+    #  ecosystem.config.js 里已经配置好了，只需要启动：pm2 start ecosystem.config.js
+}
