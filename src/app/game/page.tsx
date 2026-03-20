@@ -296,7 +296,7 @@ export default function GamePage() {
                     C: 'pai-z',
                   }[type] || 'pai-m'
                   return (
-                    <div key={i} className={`mahjong-tile w-10 h-14 text-xl ${typeClass}`}>
+                    <div key={i} className={`mahjong-tile w-10 h-14 ${typeClass}`}>
                       {formatTile(dora)}
                     </div>
                   )
@@ -326,7 +326,7 @@ export default function GamePage() {
                       C: 'pai-z',
                     }[type] || 'pai-m'
                     return (
-                      <div key={i} className={`mahjong-tile w-9 h-13 text-lg ${typeClass}`}>
+                      <div key={i} className={`mahjong-tile w-10 h-14 text-base ${typeClass}`}>
                         {formatTile(pai)}
                       </div>
                     )
@@ -356,7 +356,7 @@ export default function GamePage() {
                       C: 'pai-z',
                     }[type] || 'pai-m'
                     return (
-                      <div key={i} className={`mahjong-tile w-9 h-13 text-lg ${typeClass}`}>
+                      <div key={i} className={`mahjong-tile w-10 h-14 text-base ${typeClass}`}>
                         {formatTile(pai)}
                       </div>
                     )
@@ -386,7 +386,7 @@ export default function GamePage() {
                   return (
                     <button
                       key={i}
-                      className={`mahjong-tile w-11 h-15 text-xl ${typeClass} ${
+                      className={`mahjong-tile w-12 h-16 text-xl ${typeClass} ${
                         selectedTile === pai ? 'selected' : ''
                       }`}
                       onClick={() => setSelectedTile(pai)}

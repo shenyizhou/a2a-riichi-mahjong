@@ -177,25 +177,49 @@ export function applyAction(state: GameState, action: MjaiAction, actor: number)
   return newState
 }
 
-export function formatTile(pai: string): string {
-  // Convert tile notation to displayable Chinese
-  const typeMap: Record<string, string> = {
-    m: '万',
-    p: '筒',
-    s: '索',
-    E: '东',
-    S: '南',
-    W: '西',
-    N: '北',
-    P: '白',
-    F: '发',
-    C: '中',
+import React from 'react'
+
+// Convert tile notation to JSX with proper vertical layout for mahjong tiles
+// For manzu tiles: number (black) on top, 萬 (red) on bottom, both traditional Chinese
+export function formatTile(pai: string): React.ReactNode {
+  const typeMap: Record<string, {type: string; isCharacter: boolean}> = {
+    m: {type: '萬', isCharacter: false},
+    p: {type: '筒', isCharacter: false},
+    s: {type: '索', isCharacter: false},
+    E: {type: '東', isCharacter: true},
+    S: {type: '南', isCharacter: true},
+    W: {type: '西', isCharacter: true},
+    N: {type: '北', isCharacter: true},
+    P: {type: '白', isCharacter: true},
+    F: {type: '發', isCharacter: true},
+    C: {type: '中', isCharacter: true},
   }
 
-  if (typeMap[pai]) return typeMap[pai]
+  const numMap: Record<string, string> = {
+    '1': '一', '2': '二', '3': '三', '4': '四',
+    '5': '五', '6': '六', '7': '七', '8': '八', '9': '九',
+  }
+
+  if (typeMap[pai]?.isCharacter) {
+    return <span>{typeMap[pai].type}</span>
+  }
+
   const num = pai[0]
-  const type = typeMap[pai[1]]
-  return num + type
+  const type = pai[1]
+  const numChar = numMap[num] || num
+
+  if (type === 'm') {
+    // For manzu tiles: top = number (black), bottom = 萬 (red)
+    return (
+      <div className="flex flex-col items-center leading-none">
+        <span className="font-black">{numChar}</span>
+        <span className="text-red-600 font-black">{typeMap[type].type}</span>
+      </div>
+    )
+  }
+
+  // For other tiles: just normal display
+  return <span>{numChar}{typeMap[type].type}</span>
 }
 
 export function saveGameRecordToNote(state: GameState, duration: number): {

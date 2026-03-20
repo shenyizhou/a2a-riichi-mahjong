@@ -53,10 +53,8 @@ body {
   @apply opacity-50 cursor-not-allowed;
 }
 
-/* 按牌类型区分文字颜色 */
-.mahjong-tile.pai-m { /* 万 */
-  @apply text-black;
-}
+/* 按牌类型区分文字颜色 -万子已经在JSX里分层上色了 */
+.mahjong-tile.pai-m { /* 万 - 保持底色，内容已在JSX染色 */ }
 .mahjong-tile.pai-p { /* 筒 */
   @apply text-red-600;
 }
