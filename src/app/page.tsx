@@ -37,15 +37,19 @@ export default function Home() {
   const { session, loading } = useSession()
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-green-50 to-green-100 dark:from-green-900 dark:to-green-950">
-      <div className="container mx-auto px-4 py-12">
-        {/* Header */}
-        <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-green-900 dark:text-green-100 mb-4">
-            A2A 立直麻将
+    <main className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-green-100 dark:from-green-950 dark:via-green-900 dark:to-green-950">
+      <div className="container mx-auto px-4 py-16">
+        {/* Hero Header */}
+        <header className="text-center mb-16 max-w-3xl mx-auto">
+          <div className="inline-block mb-4 px-4 py-1 bg-green-100 dark:bg-green-800 rounded-full text-green-700 dark:text-green-300 text-sm font-medium">
+            🀄️ SecondMe A2A Hackathon Demo
+          </div>
+          <h1 className="text-5xl md:text-6xl font-black text-green-900 dark:text-green-100 mb-6 tracking-tight">
+            A2A 清一色万子麻将
           </h1>
-          <p className="text-lg text-green-700 dark:text-green-300">
-            和 SecondMe AI 一起打立直麻将
+          <p className="text-xl text-green-700 dark:text-green-300 max-w-2xl mx-auto leading-relaxed">
+            基于 SecondMe 的 Agent-to-Agent 对战 Demo，
+            让 AI 理解麻将规则，陪你一对一打<span className="font-semibold">清一色万子麻将</span>。
           </p>
         </header>
 
@@ -113,30 +117,39 @@ export default function Home() {
             </Card>
           )}
 
-          {/* Features */}
-          <div className="mt-12 grid grid-cols-1 gap-4">
-            <div className="bg-white/80 dark:bg-green-800/30 rounded-lg p-6 backdrop-blur">
-              <h3 className="font-semibold text-lg mb-2 text-green-900 dark:text-green-100">
-                🎮 基于 SecondMe A2A
+          {/* Features Grid */}
+          <div className="mt-16 grid md:grid-cols-3 gap-6">
+            <div className="bg-white/90 dark:bg-green-800/40 rounded-xl p-8 backdrop-blur shadow-lg hover:shadow-xl transition-shadow">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mb-4">
+                <span className="text-white text-2xl">🎮</span>
+              </div>
+              <h3 className="font-bold text-xl mb-3 text-green-900 dark:text-green-100">
+                AI 实时对战
               </h3>
-              <p className="text-green-700 dark:text-green-300">
-                利用 SecondMe 的 chat 能力，让 AI 理解麻将局面并做出决策，真正的 AI 陪玩。
+              <p className="text-green-700 dark:text-green-300 leading-relaxed">
+                利用 SecondMe Chat API，AI 真正理解麻将规则和当前局面，自主做出打牌决策。
               </p>
             </div>
-            <div className="bg-white/80 dark:bg-green-800/30 rounded-lg p-6 backdrop-blur">
-              <h3 className="font-semibold text-lg mb-2 text-green-900 dark:text-green-100">
-                📝 记忆自动保存
+            <div className="bg-white/90 dark:bg-green-800/40 rounded-xl p-8 backdrop-blur shadow-lg hover:shadow-xl transition-shadow">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mb-4">
+                <span className="text-white text-2xl">🧠</span>
+              </div>
+              <h3 className="font-bold text-xl mb-3 text-green-900 dark:text-green-100">
+                记忆持久化
               </h3>
-              <p className="text-green-700 dark:text-green-300">
-                每局对局记录都会自动保存到你的 SecondMe 记忆中，AI 会记住你的打牌风格。
+              <p className="text-green-700 dark:text-green-300 leading-relaxed">
+                对局记录自动保存到 SecondMe 记忆，AI 可以逐渐学习你的打牌风格。
               </p>
             </div>
-            <div className="bg-white/80 dark:bg-green-800/30 rounded-lg p-6 backdrop-blur">
-              <h3 className="font-semibold text-lg mb-2 text-green-900 dark:text-green-100">
-                🔌 开放 MCP 接口
+            <div className="bg-white/90 dark:bg-green-800/40 rounded-xl p-8 backdrop-blur shadow-lg hover:shadow-xl transition-shadow">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mb-4">
+                <span className="text-white text-2xl">🔌</span>
+              </div>
+              <h3 className="font-bold text-xl mb-3 text-green-900 dark:text-green-100">
+                MCP 集成
               </h3>
-              <p className="text-green-700 dark:text-green-300">
-                支持 MCP 集成，OpenClaw 可以直接调用你的麻将游戏能力。
+              <p className="text-green-700 dark:text-green-300 leading-relaxed">
+                完整支持 MCP 协议，OpenClaw 可以直接调用游戏能力，支持未来更多玩法。
               </p>
             </div>
           </div>
