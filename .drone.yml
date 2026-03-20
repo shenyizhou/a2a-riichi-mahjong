@@ -5,13 +5,12 @@ name: default
 steps:
   # 1. Install deps and build
   - name: build-frontend
-    image: node:20
+    image: node:18-alpine
     environment:
       # Reduced memory to fit within limits
       NODE_OPTIONS: '--max-old-space-size=1024'
     commands:
-      - corepack enable
-      - npm install
+      - npm ci
       - npm run build
 
   # 2. Deploy to host volume
@@ -21,11 +20,13 @@ steps:
       - name: wwwroot
         path: /var/www/a2a-riichi-mahjong
     commands:
+      - mkdir -p /var/www/a2a-riichi-mahjong
       - mkdir -p /var/www/a2a-riichi-mahjong/.next
-      - mkdir -p /var/www/a2a-riichi-mahjong/public
-      - cp -r .next/* /var/www/a2a-riichi-mahjong/.next/
-      - cp -r public/* /var/www/a2a-riichi-mahjong/public/
+      - rm -rf /var/www/a2a-riichi-mahjong/.next/*
+      - cp -r .next/. /var/www/a2a-riichi-mahjong/.next/
+      - if [ -d public ]; then mkdir -p /var/www/a2a-riichi-mahjong/public && cp -r public/. /var/www/a2a-riichi-mahjong/public/; fi
       - cp package.json /var/www/a2a-riichi-mahjong/
+      - cp package-lock.json /var/www/a2a-riichi-mahjong/
       - cp next.config.js /var/www/a2a-riichi-mahjong/
     when:
       branch:
