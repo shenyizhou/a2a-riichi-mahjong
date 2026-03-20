@@ -88,25 +88,10 @@ export default function GamePage() {
         return
       }
 
-      // Apply AI action
-      // For this demo, we'll just get the action and switch back to human
-      // Full implementation would apply the action and continue
+      if (data.gameState) {
+        setGame(data.gameState)
+      }
       setThinking(false)
-      setGame(prev => {
-        if (!prev) return prev
-        const newGame = { ...prev }
-        if (data.action.type !== 'none' && data.action.type !== 'dahai') {
-          newGame.events.push({ ...data.action, actor: 1 })
-        }
-        if (data.action.type === 'dahai') {
-          // AI discards, we show it to human
-          newGame.events.push({ ...data.action, actor: 1 })
-          // Next is human's turn
-          // In full implementation: human draws a tile
-        }
-        newGame.currentActor = 0
-        return newGame
-      })
     } catch (e) {
       setError('AI thinking failed')
       setThinking(false)
@@ -225,6 +210,10 @@ export default function GamePage() {
 
     return { remainingTiles, round, tileCounts }
   }, [game])
+
+  const hasHumanDiscarded = game
+    ? game.events.some(e => e.type === 'dahai' && 'actor' in e && e.actor === 0)
+    : false
 
   // Direct click to discard - click tile directly to play it
   const handleTileClick = async (pai: string) => {
@@ -448,7 +437,7 @@ export default function GamePage() {
                     variant="outline"
                     size="sm"
                     onClick={sortHand}
-                    disabled={game.currentActor !== 0 || thinking}
+                    disabled={game.currentActor !== 0 || thinking || !hasHumanDiscarded}
                     className="bg-white/20 hover:bg-white/30 border-white/40 text-white"
                   >
                     <SortAsc className="w-4 h-4 mr-1" />
@@ -491,25 +480,33 @@ export default function GamePage() {
             <Card className="mt-6">
               <CardHeader>
                 <CardTitle className="text-lg">牌山剩余</CardTitle>
-                <CardDescription>每种万子牌还剩几张</CardDescription>
+                <CardDescription>
+                  {hasHumanDiscarded ? '每种万子牌还剩几张' : '打出第一张牌后解锁显示'}
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-9 gap-2">
-                  {(['1m', '2m', '3m', '4m', '5m', '6m', '7m', '8m', '9m']).map(pai => {
-                    const remaining = stats.tileCounts[pai] || 0
-                    let bgClass = 'bg-green-100 dark:bg-green-900'
-                    if (remaining === 0) bgClass = 'bg-red-100 dark:bg-red-900'
-                    else if (remaining <= 2) bgClass = 'bg-yellow-100 dark:bg-yellow-900'
-                    return (
-                      <div key={pai} className={`${bgClass} rounded-lg p-2 text-center`}>
-                        <div className="mb-1">{formatTile(pai)}</div>
-                        <div className="text-xs font-bold text-green-800 dark:text-green-200">
-                          {remaining}/4
+                {hasHumanDiscarded ? (
+                  <div className="grid grid-cols-9 gap-2">
+                    {(['1m', '2m', '3m', '4m', '5m', '6m', '7m', '8m', '9m']).map(pai => {
+                      const remaining = stats.tileCounts[pai] || 0
+                      let bgClass = 'bg-green-100 dark:bg-green-900'
+                      if (remaining === 0) bgClass = 'bg-red-100 dark:bg-red-900'
+                      else if (remaining <= 2) bgClass = 'bg-yellow-100 dark:bg-yellow-900'
+                      return (
+                        <div key={pai} className={`${bgClass} rounded-lg p-2 text-center`}>
+                          <div className="mb-1">{formatTile(pai)}</div>
+                          <div className="text-xs font-bold text-green-800 dark:text-green-200">
+                            {remaining}/4
+                          </div>
                         </div>
-                      </div>
-                    )
-                  })}
-                </div>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <div className="rounded-lg border border-dashed border-green-300 dark:border-green-700 p-4 text-sm text-green-700 dark:text-green-300">
+                    为了保留清一色实战的心算体验，开局不显示牌山剩余统计。
+                  </div>
+                )}
               </CardContent>
             </Card>
           </>

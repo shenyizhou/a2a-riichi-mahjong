@@ -39,7 +39,9 @@ export interface GameState {
   currentActor: number
   availableActions: MjaiAction[]
   humanHand: string[]
+  aiHand: string[]
   aiHandHidden: string[]
+  wall: string[]
   doraMarkers: string[]
   gameStarted: boolean
   gameEnded: boolean

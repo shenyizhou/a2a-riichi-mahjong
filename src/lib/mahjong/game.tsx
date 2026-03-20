@@ -2,7 +2,7 @@
 // 规则：只使用万子牌，不能吃碰杠，双方轮流打牌，自摸胡牌
 // 遵循 mjai 协议格式
 
-import type { GameState, MjaiEvent, MjaiAction, AIDecisionRequest } from '@/lib/types/mjai'
+import type { GameState, MjaiEvent, MjaiAction } from '@/lib/types/mjai'
 
 // 只使用万子牌 (清一色)
 const ALL_TILES = [
@@ -36,7 +36,9 @@ export function createNewGame(): GameState {
     currentActor: 0, // East starts (human is 0 = east)
     availableActions: [],
     humanHand: humanHand, // Don't sort, keep the deal order
+    aiHand: aiHand,
     aiHandHidden: aiHand.map(() => '?'),
+    wall: wall,
     doraMarkers: [doraMarker],
     gameStarted: true,
     gameEnded: false,
@@ -175,6 +177,249 @@ export function applyAction(state: GameState, action: MjaiAction, actor: number)
   }
 
   return newState
+}
+
+function tileToIndex(pai: string): number {
+  return parseInt(pai[0], 10) - 1
+}
+
+function handToCounts(hand: string[]): number[] {
+  const counts = Array(9).fill(0)
+  for (const pai of hand) {
+    const idx = tileToIndex(pai)
+    if (idx >= 0 && idx < 9) {
+      counts[idx] += 1
+    }
+  }
+  return counts
+}
+
+function canFormAllMelds(counts: number[]): boolean {
+  let i = 0
+  while (i < 9 && counts[i] === 0) i += 1
+  if (i === 9) return true
+
+  if (counts[i] >= 3) {
+    counts[i] -= 3
+    if (canFormAllMelds(counts)) {
+      counts[i] += 3
+      return true
+    }
+    counts[i] += 3
+  }
+
+  if (i <= 6 && counts[i] > 0 && counts[i + 1] > 0 && counts[i + 2] > 0) {
+    counts[i] -= 1
+    counts[i + 1] -= 1
+    counts[i + 2] -= 1
+    if (canFormAllMelds(counts)) {
+      counts[i] += 1
+      counts[i + 1] += 1
+      counts[i + 2] += 1
+      return true
+    }
+    counts[i] += 1
+    counts[i + 1] += 1
+    counts[i + 2] += 1
+  }
+
+  return false
+}
+
+function isWinningHand(hand: string[]): boolean {
+  if (hand.length % 3 !== 2) return false
+  const counts = handToCounts(hand)
+  for (let i = 0; i < 9; i++) {
+    if (counts[i] >= 2) {
+      counts[i] -= 2
+      if (canFormAllMelds(counts)) {
+        counts[i] += 2
+        return true
+      }
+      counts[i] += 2
+    }
+  }
+  return false
+}
+
+function calculateShantenFromCounts(initialCounts: number[]): number {
+  let best = 8
+  const counts = [...initialCounts]
+
+  const dfs = (idx: number, melds: number, pairs: number, taatsu: number) => {
+    while (idx < 9 && counts[idx] === 0) idx += 1
+    if (idx >= 9) {
+      const useTaatsu = Math.min(taatsu, 4 - melds)
+      const value = 8 - melds * 2 - useTaatsu - Math.min(pairs, 1)
+      if (value < best) best = value
+      return
+    }
+
+    if (counts[idx] >= 3) {
+      counts[idx] -= 3
+      dfs(idx, melds + 1, pairs, taatsu)
+      counts[idx] += 3
+    }
+
+    if (idx <= 6 && counts[idx] > 0 && counts[idx + 1] > 0 && counts[idx + 2] > 0) {
+      counts[idx] -= 1
+      counts[idx + 1] -= 1
+      counts[idx + 2] -= 1
+      dfs(idx, melds + 1, pairs, taatsu)
+      counts[idx] += 1
+      counts[idx + 1] += 1
+      counts[idx + 2] += 1
+    }
+
+    if (pairs < 1 && counts[idx] >= 2) {
+      counts[idx] -= 2
+      dfs(idx, melds, pairs + 1, taatsu)
+      counts[idx] += 2
+    }
+
+    if (counts[idx] >= 2) {
+      counts[idx] -= 2
+      dfs(idx, melds, pairs, taatsu + 1)
+      counts[idx] += 2
+    }
+
+    if (idx <= 7 && counts[idx] > 0 && counts[idx + 1] > 0) {
+      counts[idx] -= 1
+      counts[idx + 1] -= 1
+      dfs(idx, melds, pairs, taatsu + 1)
+      counts[idx] += 1
+      counts[idx + 1] += 1
+    }
+
+    if (idx <= 6 && counts[idx] > 0 && counts[idx + 2] > 0) {
+      counts[idx] -= 1
+      counts[idx + 2] -= 1
+      dfs(idx, melds, pairs, taatsu + 1)
+      counts[idx] += 1
+      counts[idx + 2] += 1
+    }
+
+    counts[idx] -= 1
+    dfs(idx, melds, pairs, taatsu)
+    counts[idx] += 1
+  }
+
+  dfs(0, 0, 0, 0)
+  return best
+}
+
+function calculateShanten(hand: string[]): number {
+  if (isWinningHand(hand)) return -1
+  return calculateShantenFromCounts(handToCounts(hand))
+}
+
+function countUkeire(hand13: string[]): number {
+  const baseShanten = calculateShanten(hand13)
+  let total = 0
+  for (let i = 1; i <= 9; i++) {
+    const candidate = `${i}m`
+    const cnt = hand13.filter(t => t === candidate).length
+    if (cnt >= 4) continue
+    const nextShanten = calculateShanten([...hand13, candidate])
+    if (nextShanten < baseShanten) {
+      total += 4 - cnt
+    }
+  }
+  return total
+}
+
+function chooseBestDiscard(hand14: string[], drawnTile: string): Extract<MjaiAction, { type: 'dahai' }> {
+  let bestPai = hand14[hand14.length - 1]
+  let bestShanten = Number.POSITIVE_INFINITY
+  let bestUkeire = -1
+
+  const uniqueTiles = Array.from(new Set(hand14))
+  for (const pai of uniqueTiles) {
+    const idx = hand14.indexOf(pai)
+    if (idx < 0) continue
+    const nextHand = [...hand14]
+    nextHand.splice(idx, 1)
+    const shanten = calculateShanten(nextHand)
+    const ukeire = countUkeire(nextHand)
+    if (
+      shanten < bestShanten ||
+      (shanten === bestShanten && ukeire > bestUkeire)
+    ) {
+      bestShanten = shanten
+      bestUkeire = ukeire
+      bestPai = pai
+    }
+  }
+
+  return {
+    type: 'dahai',
+    pai: bestPai,
+    tsumogiri: bestPai === drawnTile,
+  }
+}
+
+export function processAITurn(state: GameState): { gameState: GameState; action: MjaiAction } {
+  const nextState: GameState = {
+    ...state,
+    humanHand: [...state.humanHand],
+    aiHand: [...state.aiHand],
+    aiHandHidden: [...state.aiHandHidden],
+    wall: [...state.wall],
+    events: [...state.events],
+  }
+
+  if (nextState.gameEnded || nextState.currentActor !== 1) {
+    return { gameState: nextState, action: { type: 'none' } }
+  }
+
+  const lastEvent = nextState.events[nextState.events.length - 1]
+  if (lastEvent?.type === 'dahai' && lastEvent.actor === 0) {
+    const canRon = isWinningHand([...nextState.aiHand, lastEvent.pai])
+    if (canRon) {
+      const ronEvent: MjaiEvent = { type: 'ron', actor: 1, target: 0, pai: lastEvent.pai }
+      nextState.events.push(ronEvent)
+      nextState.scores = [nextState.scores[0] - 10000, nextState.scores[1] + 10000]
+      nextState.gameEnded = true
+      return { gameState: nextState, action: { type: 'ron' } }
+    }
+  }
+
+  if (nextState.wall.length === 0) {
+    nextState.events.push({ type: 'ryukyoku' })
+    nextState.gameEnded = true
+    return { gameState: nextState, action: { type: 'none' } }
+  }
+
+  const aiDraw = nextState.wall.shift()!
+  nextState.aiHand.push(aiDraw)
+  nextState.events.push({ type: 'tsumo', actor: 1, pai: aiDraw })
+
+  if (isWinningHand(nextState.aiHand)) {
+    nextState.events.push({ type: 'tsumo_agari', actor: 1 })
+    nextState.scores = [nextState.scores[0] - 10000, nextState.scores[1] + 10000]
+    nextState.gameEnded = true
+    return { gameState: nextState, action: { type: 'tsumo_agari' } }
+  }
+
+  const aiAction = chooseBestDiscard(nextState.aiHand, aiDraw)
+  const aiDiscardIndex = nextState.aiHand.indexOf(aiAction.pai)
+  if (aiDiscardIndex >= 0) {
+    nextState.aiHand.splice(aiDiscardIndex, 1)
+  }
+  nextState.events.push({ type: 'dahai', actor: 1, pai: aiAction.pai, tsumogiri: aiAction.tsumogiri })
+  nextState.currentActor = 0
+
+  if (nextState.wall.length === 0) {
+    nextState.events.push({ type: 'ryukyoku' })
+    nextState.gameEnded = true
+    return { gameState: nextState, action: aiAction }
+  }
+
+  const humanDraw = nextState.wall.shift()!
+  nextState.humanHand.push(humanDraw)
+  nextState.events.push({ type: 'tsumo', actor: 0, pai: humanDraw })
+
+  return { gameState: nextState, action: aiAction }
 }
 
 import React from 'react'
